@@ -78,7 +78,7 @@ class CheckVersion():
 
             # sure, why not?
             if sickbeard.USE_FAILED_DOWNLOADS:
-                failed_history.trimHistory()
+                #failed_history.trimHistory()
 
     def find_install_type(self):
         """
