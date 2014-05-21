@@ -84,7 +84,7 @@ def processDir(dirName, nzbName=None, process_method=None, force=False, is_prior
     returnStr += logHelper(u"PostProcessing Dirs: " + str(dirs), logger.DEBUG)
 
     rarFiles = filter(helpers.isRarFile, files)
-    rarContent = unRAR(path, rarFiles, force)
+    rarContent = unRAR(path, rarFiles, force, nzbName)
     files += rarContent
     videoFiles = filter(helpers.isMediaFile, files)
     videoInRar = filter(helpers.isMediaFile, rarContent)
@@ -122,7 +122,7 @@ def processDir(dirName, nzbName=None, process_method=None, force=False, is_prior
         for processPath, processDir, fileList in ek.ek(os.walk, ek.ek(os.path.join, path, dir), topdown=False):
 
             rarFiles = filter(helpers.isRarFile, fileList)
-            rarContent = unRAR(processPath, rarFiles, force)
+            rarContent = unRAR(processPath, rarFiles, force, nzbNameOriginal)
             fileList = set(fileList + rarContent)
             videoFiles = filter(helpers.isMediaFile, fileList)
             videoInRar = filter(helpers.isMediaFile, rarContent)
@@ -229,7 +229,7 @@ def validateDir(path, dirName, nzbNameOriginal, failed):
     return False
 
 
-def unRAR(path, rarFiles, force):
+def unRAR(path, rarFiles, force, nzbName=''):
     global process_result, returnStr
 
     unpacked_files = []
@@ -263,6 +263,9 @@ def unRAR(path, rarFiles, force):
                 del rar_handle
             except Exception, e:
                 returnStr += logHelper(u"Failed Unrar archive " + archive + ': ' + ex(e), logger.ERROR)
+
+                process_failed(path, nzbName)
+
                 process_result = False
                 continue
 
